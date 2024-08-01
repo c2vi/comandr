@@ -1,0 +1,44 @@
+import { ListView, LineEdit } from "std-widgets.slint";
+
+export component CommandPalette {
+    width: 300px;
+    height: 20px;
+    forward-focus: input;
+
+    VerticalLayout {
+      width: 100%;
+      padding: 4px;
+      input := LineEdit {
+            width: 100%;
+            placeholder-text: "Type a command...";
+            edited => {
+                //filtered-commands = commands.filter(cmd => cmd.to-lowercase().contains(self.text.to-lowercase()));
+            }
+        }
+
+        /*
+        ListView {
+            for command in filtered-commands: Rectangle {
+                height: 30px;
+                Text {
+                    text: command;
+                    //color: self.has-hover ? #2980b9 : black;
+                }
+                //clicked => {
+                 //   root.execute-command(command);
+                //}
+            }
+        }
+        */
+    }
+}
+
+export component Comandr inherits Window {
+    width: 600px;
+    height: 60px;
+    title: "comandr_command_palette";
+    forward-focus: palette;
+
+    palette := CommandPalette {
+    }
+}
