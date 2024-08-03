@@ -1,7 +1,7 @@
 
 # general
 - Comandr should be able to be included into a project of any UI toolkig and language (web, python-qt, slint, flutter, ....).
-- Comands
+- Comands can have arguments
 - there is a "state", a key-value thing, that influences how commands work, what commands are availavle and the used hotkeys. (eg for things like VIM modes)
 - hotkeys are in groups, that can be enabled
     - eg when the commandr window is shown the "comandr-window" group with the "comandr.window.up" command becomes available...
