@@ -3,13 +3,14 @@ name = "comandr"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+qt = [ "qt_core", "qt_gui", "qt_widgets", "slint" ]
 
 [dependencies]
-qt_core = "0.5.0"
-qt_gui = "0.5.0"
-qt_widgets = "0.5.0"
-slint = "1.7.1"
+qt_core = { version = "0.5.0", optional = true }
+qt_gui = { version = "0.5.0", optional = true }
+qt_widgets = { version = "0.5.0", optional = true }
+slint = { version = "1.7.1", optional = true }
 
 [build-dependencies]
 slint-build = "1.7.1"
