@@ -1,11 +1,35 @@
 {
   description = "comandr flake";
 
-  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs = {
+    flake-utils.url = "github:numtide/flake-utils";
 
-  outputs = { self, nixpkgs, flake-utils }:
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    crane = {
+      url = "github:ipetkov/crane";
+    };
+
+  };
+
+  outputs = { self, nixpkgs, flake-utils, fenix, crane, ... }:
     flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = nixpkgs.legacyPackages.${system}; in
+      let 
+        pkgs = nixpkgs.legacyPackages.${system}; 
+
+        wasmToolchain = fenix.packages.${system}.combine [
+          fenix.packages.${system}.targets.wasm32-unknown-unknown.stable.toolchain
+          fenix.packages.${system}.stable.toolchain
+        ];
+        wasmCrane = (crane.mkLib pkgs).overrideToolchain wasmToolchain;
+
+        osToolchain = fenix.packages.${system}.stable.toolchain;
+        osCrane = (crane.mkLib pkgs).overrideToolchain osToolchain;
+
+      in
       {
         packages = rec {
           hello = pkgs.hello;
@@ -24,7 +48,11 @@
           patchelf
           libsForQt5.full
           cmake
+          wasm-pack
+          clang
           #lldb gdb
+
+          (fenix.packages.${system}.combine [ wasmToolchain osToolchain ])
         ];
 
         buildInputs = with pkgs; [

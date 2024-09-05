@@ -1,5 +1,5 @@
 
-#![feature(thread_local)]
+// #![feature(thread_local)]
 #![ allow( warnings ) ]
 
 pub mod core {

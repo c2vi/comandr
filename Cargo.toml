@@ -3,6 +3,9 @@ name = "comandr"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [features]
 qt = [ "qt_core", "qt_gui", "qt_widgets", "slint" ]
 
