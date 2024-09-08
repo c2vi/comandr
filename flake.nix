@@ -21,12 +21,12 @@
         pkgs = nixpkgs.legacyPackages.${system}; 
 
         wasmToolchain = fenix.packages.${system}.combine [
-          fenix.packages.${system}.targets.wasm32-unknown-unknown.stable.toolchain
-          fenix.packages.${system}.stable.toolchain
+          fenix.packages.${system}.targets.wasm32-unknown-unknown.latest.toolchain
+          fenix.packages.${system}.latest.toolchain
         ];
         wasmCrane = (crane.mkLib pkgs).overrideToolchain wasmToolchain;
 
-        osToolchain = fenix.packages.${system}.stable.toolchain;
+        osToolchain = fenix.packages.${system}.latest.toolchain;
         osCrane = (crane.mkLib pkgs).overrideToolchain osToolchain;
 
       in
