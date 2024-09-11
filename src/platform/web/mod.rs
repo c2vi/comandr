@@ -22,12 +22,15 @@ pub fn init(comandr: &mut Comandr) {
     console_log!("hello from comandr");
     console::log_1(&"hi from comandr not macro".into());
 
-    let js_init_fn = r#"
+    /*
         window.addEventListener('keypress', function(e){
             if (e.ctrlKey && e.keyCode == 13) {
                 window.comandr.fns.main_show()
             }
         }, false);
+    */
+
+    let js_init_fn = r#"
 
         window.comandr = {}
         window.comandr.fns = {}
@@ -35,7 +38,8 @@ pub fn init(comandr: &mut Comandr) {
     let js_init_jsfn = Function::new_no_args(js_init_fn);
 
     js_init_jsfn.call0(&web_sys::wasm_bindgen::JsValue::NULL);
-    
+
+    // make a window.comandr.run_command() fn
 
     //EventTarget::new().expect("failed to create a EventTarget").add_event_listener_with_callback("keypress", &js_init_jsfn);
 }

@@ -21,7 +21,7 @@ tracing = "0.1.40"
 
 # wasm dependencies
 wasm-bindgen = { version = "0.2.93", optional =  true }
-web-sys = { version = "0.3.70", features = [ "console", "EventTarget" ], optional = true }
+web-sys = { version = "0.3.70", features = [ "console", "EventTarget", "Window" ], optional = true }
 
 [build-dependencies]
 slint-build = "1.7.1"

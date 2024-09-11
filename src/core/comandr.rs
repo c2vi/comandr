@@ -2,55 +2,42 @@ use std::collections::HashMap;
 
 use crate::{core::module::Module, ComandrResult};
 use crate::Command;
-use simsearch::SimSearch;
+use simsearch::{SearchOptions, SimSearch};
 
 use super::module::ComandrModule;
-
-
-////// console_log!() macro
-use wasm_bindgen::prelude::*;
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
-macro_rules! console_log {
-    // Note that this is using the `log` function imported above during
-    // `bare_bones`
-    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
-}
-/// end of macro
-
 
 
 pub struct Comandr {
     pub modules: HashMap<String, Box<dyn Module + Send + Sync>>,
     pub engine: SimSearch<String>, // module:comand
-    pub hi: String,
 }
 
 impl Comandr {
     pub fn new() -> Comandr {
-        let mut engine: SimSearch<String> = SimSearch::new();
+        let mut engine: SimSearch<String> = SimSearch::new_with(
+            SearchOptions::new()
+                .levenshtein(true)
+                .threshold(0.01)
+        );
         let mut modules: HashMap<String, Box<dyn Module + Send + Sync>> = HashMap::new();
 
         let comandr_module: Box<dyn Module + Send + Sync> = Box::new(ComandrModule::new());
 
-        let mut comandr = Comandr { modules, engine, hi: "hiiiii inside comandr".to_owned() };
+        let mut comandr = Comandr { modules, engine };
 
-
-        for command in comandr_module.commands() {
-            comandr.activate_command(&comandr_module, command);
-        }
-
-        let result = comandr.search("comandr".to_owned());
-        console_log!("result in new: {:?}", result);
-
-        comandr.modules.insert("comandr".to_owned(), comandr_module);
+        comandr.load_module(comandr_module);
 
         comandr
 
         
+    }
+
+    pub fn load_module(&mut self, module: Box<dyn Module + Send + Sync>) {
+        for command in module.commands() {
+            self.activate_command(&module, command);
+        }
+
+        self.modules.insert(module.name(), module);
     }
 
     pub fn list_commands(&self) -> Vec<String> {
@@ -63,13 +50,22 @@ impl Comandr {
         commands
     }
 
+    pub fn get_command(&mut self, name: String) -> Option<&mut Command> {
+        for (_, mut module) in self.modules.iter_mut() {
+            let name_inner = name.split(":").nth(1).expect("command name had no :");
+            if let Some(cmd) = module.get_command(name_inner.to_owned()) {
+                return Some(cmd);
+            }
+        }
+        None
+    }
+
     pub fn activate_command(&mut self, module: &Box<dyn Module + Send + Sync>, command: &Command) {
         let name = module.name() + ":" + command.name.as_str();
         self.engine.insert(name.clone(), name.as_str());
     }
 
     pub fn search(&mut self, string: String) -> Vec<String> {
-        console_log!("comandr search method");
         let result = self.engine.search(string.as_str());
         return result;
     }

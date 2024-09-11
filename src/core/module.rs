@@ -52,5 +52,23 @@ impl Module for ComandrModule {
 
 pub fn hello() -> ComandrResult<()> {
     println!("got comnadr command");
+
+    #[cfg(feature = "wasm-target")]
+    unsafe {
+
+
+        use wasm_bindgen::prelude::*;
+        #[wasm_bindgen]
+        extern "C" {
+            #[wasm_bindgen(js_namespace = console)]
+            fn log(s: &str);
+        }
+        macro_rules! console_log {
+            // Note that this is using the `log` function imported above during
+            // `bare_bones`
+            ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
+        }
+        console_log!("got comandr command")
+    }
     Ok(())
 }
