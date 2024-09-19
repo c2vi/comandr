@@ -17,13 +17,15 @@ pub use core::error::ComandrResult;
 pub use core::module::Module;
 
 pub mod platform {
-    #[cfg(features = "qt")]
+    #[cfg(feature = "qt")]
     pub mod qt;
+
+    #[cfg(feature = "wasm-target")]
     pub mod web;
 }
 
 pub mod ui {
-    #[cfg(features = "qt")]
+    #[cfg(feature = "qt")]
     pub mod slint {
         slint::include_modules!();
     }
